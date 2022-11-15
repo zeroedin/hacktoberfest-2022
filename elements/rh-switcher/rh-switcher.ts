@@ -4,9 +4,13 @@ import { customElement, property, state, query } from 'lit/decorators.js';
 import { ComposedEvent } from '@patternfly/pfe-core';
 import { bound } from '@patternfly/pfe-core/decorators.js';
 
+import '@patternfly/pfe-accordion';
+import type { PfeSwitch } from '@patternfly/pfe-switch';
 import '@patternfly/pfe-switch';
 import '@patternfly/pfe-icon';
 import '@patternfly/pfe-button';
+import type { PfeModal } from '@patternfly/pfe-modal';
+import '@patternfly/pfe-modal';
 
 export type Variant = (
   | 'card'
@@ -33,7 +37,11 @@ export class RhSwitcher extends LitElement {
             bottom: 0;
             right: 3rem;
             min-width: 400px;
+
+            --pf-c-accordion__toggle--expanded--before--BackgroundColor: transparent;
+            --pf-c-accordion__panel--content-body--before--BackgroundColor: transparent;
         }
+        
         :host(:not([variant="card"])) [part="banner"][hidden],
         [part="banner"][hidden] {
           display: none;
@@ -119,8 +127,7 @@ export class RhSwitcher extends LitElement {
         }
 
         :host([variant="inline"]) [part="header"],
-        :host([variant="inline"]) pfe-button,
-        :host([variant="inline"]) slot[name="form"] {
+        :host([variant="inline"]) pfe-button {
           display: none !important;
         }
 
@@ -137,10 +144,9 @@ export class RhSwitcher extends LitElement {
             --pfe-icon--size: 16px;
         }
     `
+  @query('pfe-switch') private _switch!: PfeSwitch;
 
-  @query('#container') private _container!: HTMLElement;
-
-  @query('pfe-switch') private _switch!: any;
+  @query('pfe-modal') private _modal!: PfeModal;
 
   @property({ reflect: false }) key?: string;
 
@@ -183,7 +189,18 @@ export class RhSwitcher extends LitElement {
                         <pfe-icon icon="xmark" size="md" aria-label="Close"></pfe-icon>
                       </button>
                     </pfe-button>
-                    <slot name="form"></slot>
+                    ${this.variant === 'card' ? html`
+                      <pfe-accordion class="accordion" expanded>
+                        <pfe-accordion-header>
+                          <h2>What's this?</h2>
+                        </pfe-accordion-header>
+                        <pfe-accordion-panel>
+                          <slot name="form"></slot>
+                        </pfe-accordion-panel>
+                      </pfe-accordion>
+                    ` : html`
+                      <pfe-modal><slot name="form"></slot></pfe-modal>
+                    `}
                 </div>
             </div>
         `;
@@ -195,10 +212,19 @@ export class RhSwitcher extends LitElement {
       return;
     }
     const isSwitchChecked = this._switch.checked;
-    // TODO: I think this might cause issues later should first read the key
-    // JSON.parse it then set the new key to the object, then Stringify and write
-    // whole object back to localstorage.
-    localStorage.setItem(this.key, JSON.stringify({ 'switchOn': isSwitchChecked.toString() }));
+
+    const storage = this.#getStorage();
+
+    console.log(storage);
+
+    if (this.variant !== 'card' && !isSwitchChecked && storage.modalToggled !== true) {
+      this._modal.toggle();
+      storage.modalToggled = true;
+    }
+
+    storage.switchOn = isSwitchChecked.toString();
+
+    this.#saveStorage(storage);
     this.dispatchEvent(new SwapChangeEvent(isSwitchChecked, this));
     this.requestUpdate();
   }
@@ -220,10 +246,24 @@ export class RhSwitcher extends LitElement {
       return;
     }
     if (localStorage.getItem(this.key) !== null) {
-      const storage = JSON.parse(localStorage.getItem(this.key) ?? "{}");
+      const storage = this.#getStorage();
       this._switchChecked = storage.switchOn === 'true';
       this._hideSwitch = storage.hide === 'true';
     }
+  }
+
+  #getStorage() {
+    if (this.key === undefined) {
+      return;
+    }
+    return JSON.parse(localStorage.getItem(this.key) ?? "{}");
+  }
+
+  #saveStorage(storage: object) {
+    if (this.key === undefined) {
+      return;
+    }
+    localStorage.setItem(this.key, JSON.stringify(storage));
   }
 }
 
