@@ -1,11 +1,6 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, property, queryAssignedElements, state, query } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 
-import { bound } from '@patternfly/pfe-core/decorators.js';
-
-import { SwapChangeEvent } from '../rh-inline-switch/rh-inline-switch.js';
-
-// import * as styles from './rh-feedback-form.css';
 
 import '@patternfly/pfe-accordion';
 import '@patternfly/pfe-icon';
