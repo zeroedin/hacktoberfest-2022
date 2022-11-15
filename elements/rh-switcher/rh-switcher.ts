@@ -169,7 +169,9 @@ export class RhSwitcher extends LitElement {
     if (this.key === undefined) {
       return;
     }
-    localStorage.setItem(this.key, JSON.stringify({ 'hide': 'true' }));
+    const storage = JSON.parse(localStorage.getItem(this.key) ?? "{}");
+    storage.hide = 'true';
+    localStorage.setItem(this.key, JSON.stringify(storage));
     this._hideSwitch = true;
     this.requestUpdate();
   }
