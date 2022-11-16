@@ -1,3 +1,4 @@
+import 'element-internals-polyfill';
 import '@patternfly/pfe-band';
 import '@patternfly/pfe-cta';
 import '@rhds/elements/rh-secondary-nav/rh-secondary-nav.js';
