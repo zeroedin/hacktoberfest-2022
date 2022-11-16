@@ -237,7 +237,7 @@ export class RhSwitcher extends LitElement {
                         </pfe-accordion-panel>
                       </pfe-accordion>
                     ` : html`
-                      <pfe-modal><slot name="form"></slot></pfe-modal>
+                      <pfe-modal variant="small"><slot name="form"></slot></pfe-modal>
                     `}
                 </div>
             </div>
