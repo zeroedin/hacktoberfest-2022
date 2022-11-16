@@ -44,15 +44,15 @@ export class RhSwitcher extends LitElement {
         
         :host(:not([variant="card"])) [part="banner"][hidden],
         [part="banner"][hidden] {
-          display: none;
+           display: none;
         }
 
         :host([variant="bar"]) [part="banner"] {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          grid-template-rows: auto;
-          max-width: 100vw;
-          background: var(--rh-switcher-background-color, #bde1f4);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto;
+            max-width: 100vw;
+            background: var(--rh-switcher-background-color, #bde1f4);
         }
 
         :host([variant="card"]) [part="banner"] {
@@ -124,11 +124,12 @@ export class RhSwitcher extends LitElement {
 
         [data-state] {
             font-family: var(--pfe-theme--font-family--heading, "RedHatDisplay", "Overpass", Overpass, Helvetica, Arial, sans-serif);
+            padding-inline-start: var(--rh-space-sm, 8px);
         }
 
         :host([variant="inline"]) [part="header"],
         :host([variant="inline"]) pfe-button {
-          display: none !important;
+            display: none !important;
         }
 
         ::slotted(:is(h1, h2, h3, h4 , h5)) {
