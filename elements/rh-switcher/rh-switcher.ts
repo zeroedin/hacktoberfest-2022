@@ -150,7 +150,7 @@ export class RhSwitcher extends LitElement {
         }
         
         #feedback {
-          padding: 0 var(--rh-spacer-sm, 8px);
+          padding-inline-start var(--rh-spacer-md, 16px);
         }
 
         #feedback button {
