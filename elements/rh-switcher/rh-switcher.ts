@@ -33,7 +33,7 @@ export class RhSwitcher extends LitElement {
   static styles = css`
 
         :host([variant="card"]) {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             right: 3rem;
             min-width: 400px;
