@@ -144,6 +144,28 @@ export class RhSwitcher extends LitElement {
             color: #06c;
             --pfe-icon--size: 16px;
         }
+        
+        #feedback {
+          padding: 0 var(--rh-spacer-sm, 8px);
+        }
+
+        #feedback button {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          justify-content: space-around;
+        }
+
+        #feedback button svg {
+          fill: white;
+          max-width: 1rem;
+          max-height: 1rem;
+          padding-inline-start: var(--rh-spacer-sm, 8px);
+        }
+
+        #feedback button span {
+          padding-inline-end: var(--rh-spacer-sm, 8px);
+        }
     `
   @query('pfe-switch') private _switch!: PfeSwitch;
 
@@ -163,6 +185,9 @@ export class RhSwitcher extends LitElement {
   @state()
   private _switchChecked = false;
 
+  @state()
+  private _hideFeedback = true;
+
   async connectedCallback() {
     super.connectedCallback();
     await this.updateComplete;
@@ -180,9 +205,17 @@ export class RhSwitcher extends LitElement {
                     <slot></slot>
                 </div>
                 <div id="container">
+                  ${this.variant !== 'card' ? html`
+                    <pfe-button ?hidden="${this._hideFeedback}" id="feedback" @click="${this.#openModal}">
+                      <button>
+                        <svg xmlns="http://www.w3.org/2000/svg" data-icon-name="envelope" height="512" width="512" viewBox="0 0 512 512"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"></path></svg>
+                        <span>Feedback</span>
+                      </button>
+                    </pfe-button>
+                  ` : html``}
                     <div id="switch">
                       <pfe-switch id="checked" ?checked="${this._switchChecked}" show-check-icon></pfe-switch>
-                      <label for="checked" data-state="on">${this.onMessage}</label>
+                      <label for="checked" data-state="on">${this.onMessage}</label> 
                       <label for="checked" data-state="off">${this.offMessage}</label>
                     </div>
                     <pfe-button plain @click="${this._onCloseClick}">
@@ -221,6 +254,7 @@ export class RhSwitcher extends LitElement {
     if (this.variant !== 'card' && !isSwitchChecked && storage.modalToggled !== true) {
       this._modal.toggle();
       storage.modalToggled = true;
+      this._hideFeedback = false;
     }
 
     storage.switchOn = isSwitchChecked.toString();
@@ -250,7 +284,12 @@ export class RhSwitcher extends LitElement {
       const storage = this.#getStorage();
       this._switchChecked = storage.switchOn === 'true';
       this._hideSwitch = storage.hide === 'true';
+      this._hideFeedback = !storage.modalToggled;
     }
+  }
+
+  #openModal() {
+    this._modal.toggle();
   }
 
   #getStorage() {
